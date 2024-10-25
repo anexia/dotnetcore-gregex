@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Anexia.Gregex;
 
-public record class RepeatMatch<T>(
+internal record RepeatMatch<T>(
     IGregex<T> SubExpression,
     IMatch<T> PartialMatch,
     int? Times,
@@ -21,8 +21,8 @@ public record class RepeatMatch<T>(
 
     private bool IsMaxCountReached() => Times != null && PreviousMatches.Count == Times - 1;
     
-    public bool IsFinishable() => (Times == null && PartialMatch.IsFinishable()) 
-                                  || (PartialMatch.IsFinishable() && IsMaxCountReached());
+    public bool IsCompletable() => (Times == null && PartialMatch.IsCompletable()) 
+                                  || (PartialMatch.IsCompletable() && IsMaxCountReached());
 
     public Match<T> Finish()
     {
@@ -31,22 +31,33 @@ public record class RepeatMatch<T>(
     }
 
     public bool IsExtendable(T nextElement) => PartialMatch.IsExtendable(nextElement) ||
-                                               (PartialMatch.IsFinishable() &&
+                                               (PartialMatch.IsCompletable() &&
                                                 SubExpression.CreateMatch(nextElement) != null &&
                                                 !IsMaxCountReached());
 
-    public IMatch<T> Extend(T nextElement)
+    public IEnumerable<IMatch<T>> Extend(T nextElement)
     {
         if (PartialMatch.IsExtendable(nextElement))
         {
-            return new RepeatMatch<T>(SubExpression, PartialMatch.Extend(nextElement), Times);
+            foreach (var match in PartialMatch.Extend(nextElement))
+            {
+                yield return this with { PartialMatch = match };
+            }
         }
 
-        return this with
+        if (PartialMatch.IsCompletable())
         {
-            PartialMatch = SubExpression.CreateMatch(nextElement)!,
-            PreviousMatches = PreviousMatches.Add(PartialMatch.Finish())
-        };
+            var subExpressionMatch = SubExpression.CreateMatch(nextElement);
+
+            if (subExpressionMatch is not null)
+            {
+                yield return this with
+                {
+                    PartialMatch = subExpressionMatch,
+                    PreviousMatches = PreviousMatches.Add(PartialMatch.Finish())
+                };
+            }   
+        }
     }
 
     public virtual bool Equals(RepeatMatch<T>? other)
