@@ -1,5 +1,10 @@
 ## Anexia.Gregex
 
+[![](https://img.shields.io/nuget/v/Anexia.Gregex "NuGet version badge")](https://www.nuget.org/packages/Anexia.Gregex)
+[![](https://github.com/anexia/dotnetcore-gregex/actions/workflows/test.yml/badge.svg?branch=main "Test status")](https://github.com/anexia/dotnetcore-gregex/actions/workflows/test.yml)
+[![codecov.io](https://codecov.io/github/Anexia/gregex/coverage.svg?branch=main "Code coverage")](https://codecov.io/github/Anexia/dotnetcore-gregex/coverage.svg?branch=main)
+
+
 Generalized regular expressions for sequences (IEnumerables, Lists, Arrays).
 
 ## Goals
