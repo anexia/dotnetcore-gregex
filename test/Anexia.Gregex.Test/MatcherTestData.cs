@@ -25,17 +25,22 @@ public static class MatcherTestData
             { matcher, expression, [1, elementValue], [new Match<int>([elementValue])] },
             { matcher, expression, [elementValue, 1], [new Match<int>([elementValue])] },
             { matcher, expression, [1, elementValue, 1], [new Match<int>([elementValue])] },
-            { matcher, expression, [elementValue, elementValue], [new Match<int>([elementValue]), 
-                new Match<int>([elementValue])] },
+            {
+                matcher, expression, [elementValue, elementValue], [
+                    new Match<int>([elementValue]),
+                    new Match<int>([elementValue])
+                ]
+            },
         };
     }
 
-    public static TheoryData<Matcher<string>, Gen<(IGregex<string>, IEnumerable<string>)>> MatcherExecutesExpressionWithoutErrorsExamples()
+    public static TheoryData<Matcher<string>, Gen<(IGregex<string> Expression, IEnumerable<string> List)>>
+        MatcherExecutesExpressionWithoutErrorsExamples()
     {
         var maxDepth = 5;
         var maxListLength = 20;
         var maxRepetitions = 10u;
-        
+
         var simpleExpressions = Gen.OneOf(
             Gen.String.Select(Gregex.Is),
             Gen.String[0, 5].Select(prefix => Gregex.Test<string>(str => str.StartsWith(prefix))));
@@ -46,6 +51,7 @@ public static class MatcherTestData
             {
                 return simpleExpressions;
             }
+
             var followedBy = genGregex.SelectMany(firstExpression => genGregex.Select(firstExpression.FollowedBy));
             var atLeastOnce = genGregex.Select(gregex => gregex.AtLeastOnce());
             var times = genGregex.SelectMany(exp =>
@@ -53,7 +59,7 @@ public static class MatcherTestData
 
             return Gen.OneOf(followedBy, atLeastOnce, times, simpleExpressions);
         });
-        
+
         var stringLists = Gen.String.Array[0, maxListLength];
 
         var expressionsAndLists =
