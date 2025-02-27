@@ -6,7 +6,8 @@ public class MatcherTest
 {
     [Theory]
     [MemberData(nameof(MatcherTestData.FindMatches), MemberType = typeof(MatcherTestData))]
-    public void FindMatches<T>(Matcher<T> matcher, IGregex<T> exp, IEnumerable<T> elements, IEnumerable<Match<T>> expectedMatches)
+    public void FindMatches(Matcher<int> matcher, IGregex<int> exp, IEnumerable<int> elements,
+        IEnumerable<Match<int>> expectedMatches)
     {
         var actualMatches = matcher.FindMatches(exp, elements);
 
@@ -14,9 +15,12 @@ public class MatcherTest
     }
 
     [Theory]
-    [MemberData(nameof(MatcherTestData.MatcherExecutesExpressionWithoutErrorsExamples), MemberType = typeof(MatcherTestData))]
-    public void MatcherExecutesExpressionWithoutErrors<T>(Matcher<T> matcher, Gen<(IGregex<T> Expression, IEnumerable<T> List)> expressionsAndLists)
+    [MemberData(nameof(MatcherTestData.MatcherExecutesExpressionWithoutErrorsExamples),
+        MemberType = typeof(MatcherTestData))]
+    public void MatcherExecutesExpressionWithoutErrors(Matcher<string> matcher,
+        Gen<(IGregex<string> Expression, IEnumerable<string> List)> expressionsAndLists)
     {
-        expressionsAndLists.Sample(expAndList => _ = matcher.FindMatches(expAndList.Expression, expAndList.List).ToArray());
+        expressionsAndLists.Sample(expAndList =>
+            _ = matcher.FindMatches(expAndList.Expression, expAndList.List).ToArray());
     }
 }

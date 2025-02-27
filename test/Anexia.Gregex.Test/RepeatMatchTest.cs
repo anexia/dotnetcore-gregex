@@ -11,7 +11,7 @@ public sealed class RepeatMatchTest
 {
     [Theory]
     [MemberData(nameof(RepeatMatchTestData.IsCompletableExamples), MemberType = typeof(RepeatMatchTestData))]
-    public void IsCompletable<T>(IMatch<T> match, bool isCompletable)
+    public void IsCompletable(IMatch<bool> match, bool isCompletable)
     {
         var actualIsCompletable = match.IsCompletable();
         
@@ -20,7 +20,7 @@ public sealed class RepeatMatchTest
 
     [Theory]
     [MemberData(nameof(RepeatMatchTestData.FinishExamples), MemberType = typeof(RepeatMatchTestData))]
-    public void Finish<T>(IMatch<T> match, Match<T> expectedMatch)
+    public void Finish(IMatch<bool> match, Match<bool> expectedMatch)
     {
         var actualMatch = match.Finish();
         
@@ -29,7 +29,7 @@ public sealed class RepeatMatchTest
 
     [Theory]
     [MemberData(nameof(RepeatMatchTestData.IsExtendableExamples), MemberType = typeof(RepeatMatchTestData))]
-    public void IsExtendable<T>(IMatch<T> match, T element, bool expectedIsExtendable)
+    public void IsExtendable(IMatch<bool> match, bool element, bool expectedIsExtendable)
     {
         var actualIsExtendable = match.IsExtendable(element);
         
@@ -38,7 +38,7 @@ public sealed class RepeatMatchTest
 
     [Theory]
     [MemberData(nameof(RepeatMatchTestData.ExtendExamples), MemberType = typeof(RepeatMatchTestData))]
-    public void Extend<T>(IMatch<T> match, T element, IEnumerable<IMatch<T>> expectedMatch)
+    public void Extend(IMatch<bool> match, bool element, IEnumerable<IMatch<bool>> expectedMatch)
     {
         var actualMatch = match.Extend(element);
         
